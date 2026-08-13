@@ -1,0 +1,76 @@
+{
+    "modelo": "LSTM_multirrama_final",
+    "periodos_era5": [
+        "ene_feb",
+        "mar_abr",
+        "may_jun",
+        "jul_ago",
+        "sep_dic"
+    ],
+    "variables_era5": [
+        "temp_media_c",
+        "temp_rocio_c",
+        "precipitacion_mm",
+        "radiacion_mj_m2"
+    ],
+    "periodos_sentinel": [
+        "jan_feb",
+        "mar_apr",
+        "may_jun",
+        "jul",
+        "nov_dec"
+    ],
+    "indices_sentinel": [
+        "NDVI",
+        "EVI",
+        "NDMI"
+    ],
+    "variables_static": [
+        "clay_pct_0_30cm",
+        "sand_pct_0_30cm",
+        "soc_g_kg_0_30cm",
+        "ph_0_30cm",
+        "bdod_g_cm3_0_30cm",
+        "n_recintos",
+        "superficie_eurocrops_ha",
+        "superficie_media_recinto_ha",
+        "temp_media_c_campana",
+        "temp_rocio_c_campana",
+        "precipitacion_mm_campana",
+        "radiacion_mj_m2_campana"
+    ],
+    "mapa_cultivo": {
+        "barley": 0.0,
+        "common_soft_wheat": 1.0
+    },
+    "shapes": {
+        "ERA5": [
+            5,
+            4
+        ],
+        "Sentinel2": [
+            5,
+            3
+        ],
+        "Static": [
+            12
+        ],
+        "Cultivo": [
+            1
+        ]
+    },
+    "target": "rendimiento_kg_ha",
+    "train_period": [
+        2017,
+        2018,
+        2019,
+        2020,
+        2021,
+        2022
+    ],
+    "test_period": [
+        2023
+    ],
+    "epochs_final": 98,
+    "seed": 42
+}
