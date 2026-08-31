@@ -796,33 +796,34 @@ if calcular:
         "Estimación calculada correctamente"
     )
 
-    st.subheader(
-        "🌾 Rendimiento estimado"
+    st.subheader("🌾 Rendimiento estimado")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.metric(
+            label="Rendimiento",
+            value=f"{pred_lstm:,.0f} kg/ha"
+        )
+
+    with col2:
+        st.metric(
+            label="Rendimiento",
+            value=f"{pred_lstm / 1000:,.2f} t/ha"
+        )
+
+    st.subheader("📦 Producción total estimada")
+
+    st.metric(
+        label=f"Para una superficie de {superficie_ha:,.2f} ha",
+        value=f"{produccion_total_t:,.2f} t"
     )
-
-    r1, r2, r3 = st.columns(3)
-
-    with r1:
-
-        st.metric(
-            "Rendimiento",
-            f"{formato_es(pred_lstm, 0)} kg/ha"
-        )
-
-    with r2:
-
-        st.metric(
-            "Rendimiento",
-            f"{formato_es(rendimiento_t_ha, 2)} t/ha"
-        )
-
-    with r3:
-
-        st.metric(
-            "Producción total estimada",
-            f"{formato_es(produccion_total_t, 2)} t"
-        )
-
+    
+    st.caption(
+    "La producción total se calcula a partir del rendimiento estimado y "
+    "de la superficie indicada; la superficie no interviene en la predicción "
+    "del rendimiento realizada por el modelo."
+    )
 
     # -----------------
     # DATOS UTILIZADOS
