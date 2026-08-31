@@ -7,9 +7,9 @@ import streamlit as st
 import tensorflow as tf
 
 
-# ============================================================
+#----------------------
 # CONFIGURACIÓN GENERAL
-# ============================================================
+#----------------------
 
 st.set_page_config(
     page_title="Predicción de rendimiento agrícola",
@@ -22,9 +22,9 @@ BASE_DIR = os.path.dirname(
 )
 
 
-# ============================================================
+# -----------------------------------------------
 # CARGAR MODELO, PREPROCESADORES Y CONFIGURACIÓN
-# ============================================================
+# -----------------------------------------------
 
 @st.cache_resource
 def cargar_modelo_y_preprocesadores():
@@ -125,9 +125,9 @@ config, referencias, rangos = cargar_configuracion_y_datos()
 rangos = rangos.set_index("variable")
 
 
-# ============================================================
+# ---------------------
 # VARIABLES DEL MODELO
-# ============================================================
+# ---------------------
 
 PERIODOS_ERA5 = config["periodos_era5"]
 VARIABLES_ERA5 = config["variables_era5"]
@@ -180,9 +180,9 @@ NUM_COLS_MODELO = (
 )
 
 
-# ============================================================
+# --------
 # CULTIVOS
-# ============================================================
+# --------
 
 CULTIVOS_UI = {
     "Cebada": "barley",
@@ -190,9 +190,9 @@ CULTIVOS_UI = {
 }
 
 
-# ============================================================
-# ETIQUETAS AMIGABLES
-# ============================================================
+# ----------
+# ETIQUETAS 
+# ----------
 
 def etiqueta_variable(variable):
 
@@ -247,9 +247,9 @@ def etiqueta_variable(variable):
     return nombre
 
 
-# ============================================================
-# FORMATO NUMÉRICO ESPAÑOL
-# ============================================================
+# ----------------
+# FORMATO NUMÉRICO
+# ----------------
 
 def formato_es(numero, decimales=0):
 
@@ -263,9 +263,9 @@ def formato_es(numero, decimales=0):
     )
 
 
-# ============================================================
+# ----------------------
 # REFERENCIAS HISTÓRICAS
-# ============================================================
+# ----------------------
 
 def obtener_referencia(
     provincia,
@@ -292,9 +292,9 @@ def obtener_referencia(
     return fila.iloc[0].copy()
 
 
-# ============================================================
+# -----------------
 # INPUTS OPCIONALES
-# ============================================================
+# -----------------
 
 def campo_opcional(
     variable,
@@ -329,9 +329,9 @@ def campo_opcional(
         return None
 
 
-# ============================================================
+# ---------------------
 # CONSTRUIR INPUTS LSTM
-# ============================================================
+# ---------------------
 
 def preparar_inputs_lstm(
     entrada
@@ -441,9 +441,9 @@ def preparar_inputs_lstm(
     ]
 
 
-# ============================================================
+# ---------
 # CABECERA
-# ============================================================
+# ---------
 
 st.title(
     "🌾 Predicción de rendimiento agrícola"
@@ -460,7 +460,9 @@ el **cultivo, la provincia y la superficie de la finca**.
 
 La aplicación completa automáticamente la información restante
 con valores históricos de referencia del periodo **2017–2022**.
-
+Opcionalmente, puede indicar la superficie de la finca para calcular
+la producción total estimada.
+    
 Si dispone de información propia sobre clima, suelo o estado
 del cultivo, puede introducirla en los apartados opcionales.
 Los campos que queden vacíos se completarán automáticamente.
@@ -478,9 +480,9 @@ parcelaria operacional.
 )
 
 
-# ============================================================
+# --------------
 # DATOS BÁSICOS
-# ============================================================
+# --------------
 
 st.header(
     "📍 Datos básicos de la finca"
@@ -526,11 +528,14 @@ with col3:
         value=10.0,
         step=0.1
     )
+    st.caption(
+    "La superficie no modifica el rendimiento estimado (kg/ha). "
+    "Se utiliza únicamente para calcular la producción total de la finca."
+    )
 
-
-# ============================================================
+# --------------------
 # INFORMACIÓN OPCIONAL
-# ============================================================
+# --------------------
 
 st.markdown(
     """
@@ -547,9 +552,9 @@ históricos de referencia de la provincia y cultivo seleccionados.
 datos_usuario = {}
 
 
-# ------------------------------------------------------------
+# --------------
 # CLIMA GENERAL
-# ------------------------------------------------------------
+# --------------
 
 with st.expander(
     "🌦️ Datos meteorológicos generales — opcional"
@@ -572,9 +577,9 @@ de ellos. No es necesario completar todos los campos.
         )
 
 
-# ------------------------------------------------------------
+# ----------------
 # CLIMA DETALLADO
-# ------------------------------------------------------------
+# -----------------
 
 with st.expander(
     "🌦️ Meteorología detallada por periodos — avanzado"
@@ -597,9 +602,9 @@ meteorológica para los diferentes periodos de la campaña.
         )
 
 
-# ------------------------------------------------------------
+# ------
 # SUELO
-# ------------------------------------------------------------
+# ------
 
 with st.expander(
     "🌱 Propiedades del suelo — opcional"
@@ -622,9 +627,9 @@ disponibles. No es necesario completar todas las propiedades.
         )
 
 
-# ------------------------------------------------------------
+# --------
 # SATÉLITE
-# ------------------------------------------------------------
+# --------
 
 with st.expander(
     "🛰️ Datos satelitales / estado del cultivo — avanzado"
@@ -648,9 +653,9 @@ vacíos y se utilizarán las referencias históricas.
         )
 
 
-# ------------------------------------------------------------
+# ------------------------------------
 # INFORMACIÓN TERRITORIAL / EUROCROPS
-# ------------------------------------------------------------
+# ------------------------------------
 
 with st.expander(
     "🗺️ Información territorial de referencia"
@@ -665,9 +670,9 @@ No se solicitan como datos de entrada al usuario.
     )
 
 
-# ============================================================
+# ------
 # BOTÓN
-# ============================================================
+# ------
 
 st.header(
     "🌾 Obtener estimación"
@@ -680,9 +685,9 @@ calcular = st.button(
 )
 
 
-# ============================================================
+# -----------
 # PREDICCIÓN
-# ============================================================
+# -----------
 
 if calcular:
 
@@ -701,9 +706,9 @@ if calcular:
         st.stop()
 
 
-    # --------------------------------------------------------
+    # ----------------------------------------------
     # Crear entrada base con referencias históricas
-    # --------------------------------------------------------
+    # ----------------------------------------------
 
     entrada = {
         "cultivo": cultivo_modelo
@@ -725,9 +730,9 @@ if calcular:
         )
 
 
-    # --------------------------------------------------------
+    # -------------------------------
     # Sustituir datos personalizados
-    # --------------------------------------------------------
+    # -------------------------------
 
     variables_personalizadas = []
 
@@ -746,18 +751,18 @@ if calcular:
             )
 
 
-    # --------------------------------------------------------
+    # ----------------------------------------
     # Preparar las cuatro entradas de la LSTM
-    # --------------------------------------------------------
+    # ----------------------------------------
 
     X_lstm = preparar_inputs_lstm(
         entrada
     )
 
 
-    # --------------------------------------------------------
+    # ----------------
     # Predicción LSTM
-    # --------------------------------------------------------
+    # ----------------
 
     pred_lstm = float(
         modelo_lstm.predict(
@@ -783,9 +788,9 @@ if calcular:
     )
 
 
-    # --------------------------------------------------------
+    # --------------------
     # RESULTADO PRINCIPAL
-    # --------------------------------------------------------
+    # --------------------
 
     st.success(
         "Estimación calculada correctamente"
@@ -819,9 +824,9 @@ if calcular:
         )
 
 
-    # --------------------------------------------------------
+    # -----------------
     # DATOS UTILIZADOS
-    # --------------------------------------------------------
+    # -----------------
 
     with st.expander(
         "📊 Ver datos utilizados para la estimación"
@@ -843,7 +848,7 @@ if calcular:
 No se han introducido datos adicionales.
 
 La estimación utiliza valores históricos de referencia
-del periodo **2017–2022** para la provincia y cultivo
+del periodo **2017-2022** para la provincia y cultivo
 seleccionados.
 """
             )
@@ -885,9 +890,9 @@ de referencia:** {n_referencia}
         )
 
 
-    # --------------------------------------------------------
+    # ----------------
     # CONTROL DE RANGO
-    # --------------------------------------------------------
+    # ----------------
 
     fuera_rango = []
 
@@ -950,9 +955,9 @@ de referencia:** {n_referencia}
                 )
 
 
-    # --------------------------------------------------------
+    # -----------------------
     # INFORMACIÓN DEL MODELO
-    # --------------------------------------------------------
+    # -----------------------
 
     with st.expander(
         "🔬 Ver información del modelo"
@@ -984,9 +989,9 @@ el año 2023 como test independiente.
         )
 
 
-# ============================================================
+# ----
 # PIE
-# ============================================================
+# ----
 
 st.divider()
 
